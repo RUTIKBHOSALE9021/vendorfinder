@@ -10,6 +10,7 @@ export interface Vendor {
   contactPhone: string;
   pricing: string;
   rating: number;
+  isFavorite?: boolean;
 }
 
 export type VendorCategory = 
@@ -22,3 +23,12 @@ export type VendorCategory =
   | "Wedding Planner"
   | "Florist"
   | "Cake";
+
+export interface Message {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  timestamp: Date;
+  isRead: boolean;
+}

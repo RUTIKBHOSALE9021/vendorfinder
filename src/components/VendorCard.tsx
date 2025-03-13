@@ -2,17 +2,28 @@
 import { Vendor } from "@/types";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Star } from "lucide-react";
+import { MapPin, Star, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { Button } from "@/components/ui/button";
 
 interface VendorCardProps {
   vendor: Vendor;
 }
 
 const VendorCard = ({ vendor }: VendorCardProps) => {
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const favorited = isFavorite(vendor.id);
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFavorite(vendor);
+  };
+
   return (
-    <Link to={`/vendor/${vendor.id}`}>
-      <Card className="overflow-hidden hover:shadow-md transition-shadow duration-300 h-full flex flex-col">
+    <Card className="overflow-hidden hover:shadow-md transition-shadow duration-300 h-full flex flex-col group">
+      <Link to={`/vendor/${vendor.id}`} className="flex-grow flex flex-col">
         <div className="relative h-48">
           <img 
             src={vendor.image} 
@@ -22,6 +33,14 @@ const VendorCard = ({ vendor }: VendorCardProps) => {
           <Badge className="absolute top-3 left-3 bg-white text-primary hover:bg-white">
             {vendor.category}
           </Badge>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={`absolute top-3 right-3 bg-white/80 hover:bg-white ${favorited ? 'text-red-500' : 'text-gray-500'}`}
+            onClick={handleFavoriteClick}
+          >
+            <Heart className={`h-5 w-5 ${favorited ? 'fill-red-500' : ''}`} />
+          </Button>
         </div>
         
         <CardContent className="pt-4 pb-0 flex-grow">
@@ -44,8 +63,8 @@ const VendorCard = ({ vendor }: VendorCardProps) => {
           </div>
           <div className="text-sm font-medium text-gray-700">{vendor.pricing}</div>
         </CardFooter>
-      </Card>
-    </Link>
+      </Link>
+    </Card>
   );
 };
 

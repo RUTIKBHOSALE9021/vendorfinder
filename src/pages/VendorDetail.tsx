@@ -3,12 +3,16 @@ import { useParams, Link } from "react-router-dom";
 import { vendors } from "@/data/vendors";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Mail, Phone, MapPin, DollarSign, Star } from "lucide-react";
+import { ArrowLeft, Mail, Phone, MapPin, DollarSign, Star, Heart, MessageCircle } from "lucide-react";
 import Header from "@/components/Header";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ChatInterface from "@/components/ChatInterface";
 
 const VendorDetail = () => {
   const { id } = useParams();
   const vendor = vendors.find((v) => v.id === id);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   if (!vendor) {
     return (
@@ -22,6 +26,8 @@ const VendorDetail = () => {
       </div>
     );
   }
+
+  const favorited = isFavorite(vendor.id);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -42,7 +48,18 @@ const VendorDetail = () => {
               />
             </div>
             
-            <h1 className="text-3xl font-bold mb-2">{vendor.name}</h1>
+            <div className="flex justify-between items-center mb-4">
+              <h1 className="text-3xl font-bold">{vendor.name}</h1>
+              <Button 
+                variant={favorited ? "default" : "outline"} 
+                size="icon"
+                onClick={() => toggleFavorite(vendor)}
+                className={favorited ? "bg-red-500 hover:bg-red-600" : ""}
+              >
+                <Heart className={`h-5 w-5 ${favorited ? "fill-white" : ""}`} />
+              </Button>
+            </div>
+            
             <div className="flex items-center mb-4">
               <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
                 {vendor.category}
@@ -57,12 +74,23 @@ const VendorDetail = () => {
               </div>
             </div>
             
-            <Card className="mb-8">
-              <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">About</h2>
-                <p className="text-gray-700 leading-relaxed">{vendor.description}</p>
-              </CardContent>
-            </Card>
+            <Tabs defaultValue="about" className="mb-8">
+              <TabsList>
+                <TabsTrigger value="about">About</TabsTrigger>
+                <TabsTrigger value="chat">Chat</TabsTrigger>
+              </TabsList>
+              <TabsContent value="about">
+                <Card>
+                  <CardContent className="p-6">
+                    <h2 className="text-xl font-semibold mb-4">About</h2>
+                    <p className="text-gray-700 leading-relaxed">{vendor.description}</p>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="chat">
+                <ChatInterface vendorId={vendor.id} vendorName={vendor.name} />
+              </TabsContent>
+            </Tabs>
           </div>
           
           <div>
@@ -94,8 +122,18 @@ const VendorDetail = () => {
                 </div>
                 
                 <div className="mt-6 space-y-3">
-                  <Button className="w-full">Contact Vendor</Button>
-                  <Button variant="outline" className="w-full">Add to Favorites</Button>
+                  <Button className="w-full flex gap-2">
+                    <MessageCircle className="h-4 w-4" />
+                    Contact Vendor
+                  </Button>
+                  <Button 
+                    variant={favorited ? "default" : "outline"} 
+                    className={`w-full flex gap-2 ${favorited ? "bg-red-500 hover:bg-red-600" : ""}`}
+                    onClick={() => toggleFavorite(vendor)}
+                  >
+                    <Heart className={`h-4 w-4 ${favorited ? "fill-white" : ""}`} />
+                    {favorited ? "Remove from Favorites" : "Add to Favorites"}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
