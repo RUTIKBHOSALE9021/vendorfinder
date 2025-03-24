@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageCircle, Home } from "lucide-react";
+import { Heart, MessageCircle, Home, LogIn, UserPlus } from "lucide-react";
 
 const Header = () => {
   return (
@@ -34,7 +34,19 @@ const Header = () => {
               </Link>
             </Button>
             
-            <Button size="sm">Sign In</Button>
+            <Button variant="ghost" asChild size="sm">
+              <Link to="/login" className="flex items-center">
+                <LogIn className="h-4 w-4 mr-1 md:mr-2" />
+                <span className="hidden md:inline">Sign In</span>
+              </Link>
+            </Button>
+            
+            <Button asChild size="sm">
+              <Link to="/signup">
+                <UserPlus className="h-4 w-4 mr-1 md:mr-2" />
+                <span className="hidden md:inline">Sign Up</span>
+              </Link>
+            </Button>
           </nav>
         </div>
       </div>
