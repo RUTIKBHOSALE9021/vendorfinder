@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageCircle, Home } from "lucide-react";
+import { Heart, MessageCircle, Home, LogIn, UserPlus } from "lucide-react";
 
 const Header = () => {
   const navigate = useNavigate();

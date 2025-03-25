@@ -8,9 +8,9 @@ import Index from "./pages/Index";
 import VendorDetail from "./pages/VendorDetail";
 import NotFound from "./pages/NotFound";
 import Favorites from "./pages/Favorites";
-import { FavoritesProvider } from "./contexts/FavoritesContext";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import { FavoritesProvider } from "./contexts/FavoritesContext";
 
 const queryClient = new QueryClient();
 
