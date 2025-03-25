@@ -9,6 +9,8 @@ import VendorDetail from "./pages/VendorDetail";
 import NotFound from "./pages/NotFound";
 import Favorites from "./pages/Favorites";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 const queryClient = new QueryClient();
 
@@ -23,7 +25,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/vendor/:id" element={<VendorDetail />} />
             <Route path="/favorites" element={<Favorites />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
