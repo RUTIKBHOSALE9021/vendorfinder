@@ -24,12 +24,10 @@ const Signup = () => {
       toast.error("Please fill in all required fields");
       return;
     }
-
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-
     if (!acceptTerms) {
       toast.error("You must accept the terms and conditions");
       return;
