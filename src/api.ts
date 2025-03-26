@@ -24,3 +24,21 @@ export const signup = async (fullName: string, email: string, password: string) 
     throw "Something went wrong";
   }
 };
+
+export const login = async (email: string, password: string) => {
+  try {
+    const response = await api.post(`${apAuth}/login`, {
+      email,
+      password,
+    });
+    const data = response.data;
+    localStorage.setItem("token", data.token)
+    return data; 
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error("Login Error:", error.response?.data || error.message);
+      throw error.response?.data || "Login failed";
+    }
+    throw "Something went wrong";
+  }
+};

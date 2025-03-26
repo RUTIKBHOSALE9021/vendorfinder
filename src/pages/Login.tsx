@@ -1,26 +1,66 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { login } from "@/api";
+import { initUser } from "@/redux/indexSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const userData = useSelector((state) => state.vendor.user);
+  const [user, setUser] = useState(userData);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(()=>{
+  const token = localStorage.getItem("token");
+  if(token){
+    setUser(userData);
+    navigate("/");
+  }
+  },[]);
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // This is a placeholder for actual authentication
-    // In a real app, you would validate credentials against a backend
+
+    if (!email || !password) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
     if (email && password) {
-      toast.success("Logged in successfully!");
-      navigate("/");
+      try {
+        setLoading(true);
+        const users = await login(email, password);
+        const user = {
+          token: users.token,
+          user: {
+            id: users.user.id,
+            full_name: users.user.name,
+            email: users.user.email,
+          },
+        };
+        dispatch(initUser(user));
+        toast.success("Logged in successfully!");
+        navigate("/login");
+      } catch (error) {
+        toast.error(error.message || "Signup failed");
+      } finally {
+        setLoading(false);
+      }
     } else {
       toast.error("Please enter both email and password");
     }
@@ -30,7 +70,9 @@ const Login = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">
+            Welcome back
+          </CardTitle>
           <CardDescription className="text-center">
             Enter your credentials to access your account
           </CardDescription>
@@ -39,10 +81,10 @@ const Login = () => {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input 
-                id="email" 
-                type="email" 
-                placeholder="name@example.com" 
+              <Input
+                id="email"
+                type="email"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -51,30 +93,33 @@ const Login = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-primary hover:underline"
+                >
                   Forgot password?
                 </Link>
               </div>
-              <Input 
-                id="password" 
-                type="password" 
+              <Input
+                id="password"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
             <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="remember" 
+              <Checkbox
+                id="remember"
                 checked={rememberMe}
                 onCheckedChange={(checked) => {
-                  if (typeof checked === 'boolean') {
+                  if (typeof checked === "boolean") {
                     setRememberMe(checked);
                   }
                 }}
               />
-              <label 
-                htmlFor="remember" 
+              <label
+                htmlFor="remember"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Remember me
@@ -82,10 +127,15 @@ const Login = () => {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col">
-            <Button type="submit" className="w-full">Sign in</Button>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Signing in..." : "Sign in"}
+            </Button>
             <p className="mt-4 text-center text-sm">
               Don't have an account?{" "}
-              <Link to="/signup" className="text-primary font-medium hover:underline">
+              <Link
+                to="/signup"
+                className="text-primary font-medium hover:underline"
+              >
                 Sign up
               </Link>
             </p>
