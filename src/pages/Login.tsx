@@ -18,11 +18,13 @@ import { login } from "@/api";
 import { initUser } from "@/redux/indexSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Eye, EyeOff } from "lucide-react";
+import { RootState } from "@/redux/store";
+import { User } from "@/redux/type";
 
 const Login = () => {
   const dispatch = useDispatch();
-  const userData = useSelector((state) => state.vendor.user);
-  const [user, setUser] = useState(userData);
+  const userData = useSelector((state: RootState) => state.vendor.users);
+  const [user, setUser] = useState<User | null>(userData);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +38,7 @@ const Login = () => {
       setUser(userData);
       navigate("/");
     }
-  }, []);
+  }, [userData, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,8 +61,8 @@ const Login = () => {
         };
         dispatch(initUser(user));
         toast.success("Logged in successfully!");
-        navigate("/login");
-      } catch (error) {
+        navigate("/");
+      } catch (error: any) {
         toast.error(error.message || "Login failed");
       } finally {
         setLoading(false);

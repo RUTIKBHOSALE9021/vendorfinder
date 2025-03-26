@@ -1,14 +1,16 @@
+
 import { createSlice } from "@reduxjs/toolkit";
 import { initialStateValue } from "./initialState";
 
 const initialState: initialStateValue = {
-  users:{
-  token: "",
-  user: {
-    id: "",
-    email: "",
+  users: {
+    token: "",
+    user: {
+      id: "",
+      full_name: "",
+      email: "",
+    }
   }
-}
 };
 
 export const adminSlice = createSlice({
