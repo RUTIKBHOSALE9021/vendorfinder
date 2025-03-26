@@ -11,6 +11,7 @@ import Favorites from "./pages/Favorites";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
+import AuthCallback from "./pages/AuthCallback";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+          <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/" element={<Index />} />
             <Route path="/vendor/:id" element={<VendorDetail />} />
             <Route path="/favorites" element={<Favorites />} />

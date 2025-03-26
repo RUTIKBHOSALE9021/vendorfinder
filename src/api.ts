@@ -42,3 +42,16 @@ export const login = async (email: string, password: string) => {
     throw "Something went wrong";
   }
 };
+
+export const googleAuth = async () => {
+  try {
+    // Redirect to backend Google auth endpoint
+    window.location.href = `${api.defaults.baseURL}${apAuth}/google`;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error("Google Auth Error:", error.response?.data || error.message);
+      throw error.response?.data || "Google authentication failed";
+    }
+    throw "Something went wrong";
+  }
+};
