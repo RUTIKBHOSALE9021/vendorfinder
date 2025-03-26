@@ -1,19 +1,24 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Heart, MessageCircle, Home, LogIn, UserPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { RootState } from "@/redux/store";
+import { User } from "@/redux/type";
 
 const Header = () => {
-  const user = useSelector((state) => state.vendor.users);
-  const [userData, setUserData] = useState();
-    useEffect(() => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        setUserData(user);
-      }
-    }, [user]);
+  const user = useSelector((state: RootState) => state.vendor.users);
+  const [userData, setUserData] = useState<User | undefined>();
+  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setUserData(user);
+    }
+  }, [user]);
+  
   return (
     <header className="bg-white border-b sticky top-0 z-10">
       <div className="container mx-auto px-4 py-4">
@@ -43,7 +48,7 @@ const Header = () => {
             </Button>
        
               <Avatar>
-                <AvatarFallback>{userData?.user?.full_name?.charAt(0)}</AvatarFallback>
+                <AvatarFallback>{userData?.user?.full_name?.charAt(0) || ''}</AvatarFallback>
               </Avatar>
           </nav>
         </div>

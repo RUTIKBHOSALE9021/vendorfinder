@@ -1,3 +1,4 @@
+
 export interface User {
   token: string;
   user: {
@@ -5,4 +6,4 @@ export interface User {
     full_name: string;
     email: string;
   };
-  }
+}
