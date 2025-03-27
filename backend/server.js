@@ -16,6 +16,8 @@ const corsOptions = {
     const allowedOrigins = [
       'http://localhost:3000',
       'https://localhost:3000',
+      'https://vendorfinder.onrender.com',
+      'https://vendorgo.netlify.app',
       // Add any other origins you want to allow
     ];
 

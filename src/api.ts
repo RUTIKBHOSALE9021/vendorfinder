@@ -4,7 +4,10 @@ const apAuth = "/auth";
 let api: AxiosInstance;
 
 export const configureAPI = (baseURL: string | undefined) => {
-  api = axios.create({ baseURL: baseURL });
+  api = axios.create({ 
+    baseURL: "https://vendorfinder.onrender.com",
+    withCredentials: true 
+  });
 };
 
 export const signup = async (fullName: string, email: string, password: string) => {
@@ -46,7 +49,7 @@ export const login = async (email: string, password: string) => {
 export const googleAuth = async () => {
   try {
     // Redirect to backend Google auth endpoint
-    window.location.href = `${process.env.FRONTEND_URL}${apAuth}/google`;
+    window.location.href = "https://vendorfinder.onrender.com/auth/google";
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Google Auth Error:", error.response?.data || error.message);
