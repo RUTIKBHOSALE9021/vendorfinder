@@ -1,15 +1,41 @@
-const {createVendor,getAllVendors,getVendorById} = require("../models/vendorModel");
+const {
+  createVendor,
+  getAllVendors,
+  getVendorById,
+  getFavoriteVendors,
+} = require("../models/vendorModel");
 
 const createVendorController = async (req, res) => {
   try {
-    const { name, description, category, location, image, contactEmail, contactPhone, pricing, rating } = req.body;
-    
+    const {
+      name,
+      description,
+      category,
+      location,
+      image,
+      contactEmail,
+      contactPhone,
+      pricing,
+      rating,
+    } = req.body;
+
     if (!name || !contactEmail) {
-      return res.status(400).json({ error: "Name and Contact Email are required" });
+      return res
+        .status(400)
+        .json({ error: "Name and Contact Email are required" });
     }
 
-    const vendor = await createVendor(name, description, category, location, image, contactEmail, contactPhone, pricing, rating );
-    
+    const vendor = await createVendor(
+      name,
+      description,
+      category,
+      location,
+      image,
+      contactEmail,
+      contactPhone,
+      pricing,
+      rating
+    );
 
     res.status(201).json({ message: "Vendor added successfully", vendor });
   } catch (error) {
@@ -26,8 +52,8 @@ const getAllVendorsController = async (_, res) => {
     console.error("Error getting vendors:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
- 
+};
+
 const getVendorByIdController = async (req, res) => {
   try {
     const { id } = req.params;
@@ -40,6 +66,24 @@ const getVendorByIdController = async (req, res) => {
     console.error("Error getting vendor by id:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}; 
+};
 
-module.exports = { createVendorController ,getAllVendorsController,getVendorByIdController};
+const getFavoriteVendorsController = async (req, res) => {
+  try {
+    const vendors = await getFavoriteVendors();
+    res.status(200).json({ vendors });
+  } catch (error) {
+    console.error("Error getting favorite vendors:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
+module.exports = {
+  createVendorController,
+  getAllVendorsController,
+  getVendorByIdController,
+  getFavoriteVendorsController,
+  getFavoriteVendorsController,
+};

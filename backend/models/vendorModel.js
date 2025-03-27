@@ -34,5 +34,14 @@ const getVendorById = async (id) => {
     throw error;
   }
 }
+const getFavoriteVendors = async () => {
+  try {
+    const result = await pool.query("SELECT * FROM vendors WHERE favorite = TRUE");
+    return result.rows;
+  } catch (error) {
+    console.error("Error in getFavoriteVendors:", error);
+    throw error;
+  }
+};
 
-module.exports = { createVendor,getAllVendors,getVendorById };
+module.exports = { createVendor,getAllVendors,getVendorById,getFavoriteVendors };
