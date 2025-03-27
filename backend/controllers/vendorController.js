@@ -1,4 +1,4 @@
-const {createVendor} = require("../models/vendorModel");
+const {createVendor,getAllVendors,getVendorById} = require("../models/vendorModel");
 
 const createVendorController = async (req, res) => {
   try {
@@ -18,4 +18,28 @@ const createVendorController = async (req, res) => {
   }
 };
 
-module.exports = { createVendorController };
+const getAllVendorsController = async (_, res) => {
+  try {
+    const vendors = await getAllVendors();
+    res.status(200).json({ vendors });
+  } catch (error) {
+    console.error("Error getting vendors:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+ 
+const getVendorByIdController = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const vendor = await getVendorById(id);
+    if (!vendor) {
+      return res.status(404).json({ error: "Vendor not found" });
+    }
+    res.status(200).json({ vendor });
+  } catch (error) {
+    console.error("Error getting vendor by id:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}; 
+
+module.exports = { createVendorController ,getAllVendorsController,getVendorByIdController};

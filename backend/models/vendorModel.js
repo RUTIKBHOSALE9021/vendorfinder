@@ -15,4 +15,24 @@ const createVendor = async (name, description, category, location, image, contac
   }
 };
 
-module.exports = { createVendor };
+const getAllVendors = async () => {
+  try {
+    const result = await pool.query("SELECT * FROM vendors");
+    return result.rows;
+  } catch (error) {
+    console.error('Detailed error in getVendors:', error);
+    throw error;
+  }
+}
+
+const getVendorById = async (id) => {
+  try {
+    const result = await pool.query("SELECT * FROM vendors WHERE id = $1", [id]);
+    return result.rows[0];
+  } catch (error) {
+    console.error('Detailed error in getVendorById:', error);
+    throw error;
+  }
+}
+
+module.exports = { createVendor,getAllVendors,getVendorById };
