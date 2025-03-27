@@ -6,6 +6,6 @@ const router = express.Router();
 //vendor routes
 router.post("/create", createVendorController);
 router.get("/getall", getAllVendorsController);
-router.get("/getbyid", getVendorByIdController);
+router.get("/getbyid/:id", getVendorByIdController);
 
 module.exports = router;

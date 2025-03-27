@@ -30,7 +30,7 @@ const getAllVendorsController = async (_, res) => {
  
 const getVendorByIdController = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     const vendor = await getVendorById(id);
     if (!vendor) {
       return res.status(404).json({ error: "Vendor not found" });
