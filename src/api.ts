@@ -46,7 +46,7 @@ export const login = async (email: string, password: string) => {
 export const googleAuth = async () => {
   try {
     // Redirect to backend Google auth endpoint
-    window.location.href = `${api.defaults.baseURL}${apAuth}/google`;
+    window.location.href = `${process.env.FRONTEND_URL}${apAuth}/google`;
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error("Google Auth Error:", error.response?.data || error.message);
