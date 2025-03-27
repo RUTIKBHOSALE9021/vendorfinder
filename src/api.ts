@@ -1,5 +1,7 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
+import { VendorRequest } from "./types/apiReq";
 const apAuth = "/auth";
+const apVendor = "/vendors";
 
 let api: AxiosInstance;
 
@@ -10,6 +12,7 @@ export const configureAPI = (baseURL: string | undefined) => {
   });
 };
 
+/****************** Auth api *******************************/
 export const signup = async (fullName: string, email: string, password: string) => {
   try {
     const response = await api.post(`${apAuth}/signup`, {
@@ -58,3 +61,40 @@ export const googleAuth = async () => {
     throw "Something went wrong";
   }
 };
+/************** Vendor api ****************/
+export const createVendor = async (req:VendorRequest)=>{
+  try {
+    const response = await api.post(`${apVendor}/create`, req);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error("Create Vendor Error:", error.response?.data || error.message);
+      throw error.response?.data || "Vendor creation failed";
+    }
+    throw "Something went wrong";
+  }
+}
+export const getAllVendors = async ()=>{
+  try {
+    const response = await api.get(`${apVendor}/getall`);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error("Get Vendors Error:", error.response?.data || error.message);
+      throw error.response?.data || "Failed to fetch vendors";
+    }
+    throw "Something went wrong";
+  }
+}
+export const getVendorById = async (id:string)=>{
+  try {
+    const response = await api.get(`${apVendor}/getbyid/:${id}`);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error("Get Vendor Error:", error.response?.data || error.message);
+      throw error.response?.data || "Failed to fetch vendor";
+    }
+    throw "Something went wrong";
+  }
+}

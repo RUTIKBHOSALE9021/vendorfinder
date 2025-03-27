@@ -1,15 +1,35 @@
-
-import { useState } from "react";
-import { vendors } from "@/data/vendors";
+import { useState, useEffect } from "react";
 import SearchBar from "@/components/SearchBar";
 import VendorList from "@/components/VendorList";
 import { Vendor } from "@/types";
 import CategoryFilter from "@/components/CategoryFilter";
 import Header from "@/components/Header";
+import { getAllVendors } from "@/api";
+import { toast } from "sonner";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        setLoading(true);
+        const response = await getAllVendors();
+        // Extract the vendors array from the response
+        setVendors(response.vendors || []);
+      } catch (error) {
+        console.error("Error fetching vendors:", error);
+        toast.error("Failed to fetch vendors");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVendors();
+  }, []);
 
   const filteredVendors = vendors.filter((vendor) => {
     const matchesSearch = vendor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -43,7 +63,18 @@ const Index = () => {
           />
         </div>
 
-        <VendorList vendors={filteredVendors} />
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        ) : filteredVendors.length === 0 ? (
+          <div className="text-center py-12">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No vendors found</h3>
+            <p className="text-gray-600">Try adjusting your search or filters to find what you're looking for.</p>
+          </div>
+        ) : (
+          <VendorList vendors={filteredVendors} />
+        )}
       </main>
     </div>
   );
