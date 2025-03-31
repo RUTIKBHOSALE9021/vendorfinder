@@ -1,4 +1,3 @@
-
 import { Vendor } from "@/types";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,14 +7,14 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { addVendorToFavorite } from "@/api";
+import { addVendorToFavorite, removeVendorToFavorite } from "@/api";
 
 interface VendorCardProps {
   vendor: Vendor;
 }
 
 const VendorCard = ({ vendor }: VendorCardProps) => {
-  const user  = useSelector((state: RootState) => state.vendor.user);
+  const user = useSelector((state: RootState) => state.vendor.user);
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorited = isFavorite(vendor.id);
  
@@ -29,6 +28,15 @@ const VendorCard = ({ vendor }: VendorCardProps) => {
     }
   };
 
+  const removeFromFavorite = async (user_id: string, vendor_id: string) => {
+    try {
+      await removeVendorToFavorite({ user_id, vendor_id }); 
+    } catch (error) {
+      console.error("Failed to remove from favorites:", error);
+      alert(error.message || "Failed to remove from favorites");
+    }
+  };
+
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -37,8 +45,11 @@ const VendorCard = ({ vendor }: VendorCardProps) => {
       alert("You must be logged in to add favorites!");
       return;
     }
-
-    addToFavorite(user.id, vendor.id); 
+    if(favorited){
+      removeFromFavorite(user.id,vendor.id);
+      return;
+    }
+    addToFavorite(user.id,vendor.id); 
   };
 
   return (

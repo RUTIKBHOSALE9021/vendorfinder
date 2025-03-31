@@ -120,4 +120,17 @@ export const getFavoriteVendor = async (user_id:string)=>{
     throw error.response?.data || { message: "Something went wrong" };
   }
 };
+export const removeVendorToFavorite = async (req: addVendorToFavoriteReq) => {
+  try {
+    const response = await api.delete(`${apVendor}/removefromfavorite`, {
+      data: req,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting vendor from favorites:", error);
+    
+    throw error.response?.data || { message: "Something went wrong" };
+  }
+};
 

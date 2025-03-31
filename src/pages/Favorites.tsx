@@ -10,6 +10,7 @@ import { getFavoriteVendor } from "@/api";
 
 const Favorites = () => {
   const [favorites,setFavorites] = useState([]);
+  const [refresh,setRefresh] = useState(false);
   const user  = useSelector((state: RootState) => state.vendor.user);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -28,7 +29,7 @@ const Favorites = () => {
     };
 
     fetchFavorites();
-  }, [user?.id, setFavorites]);
+  }, [user?.id, setFavorites,refresh]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -52,7 +53,7 @@ const Favorites = () => {
             </p>
           </div>
         ) : (
-          <VendorList vendors={favorites} />
+          <VendorList setRefresh = {setRefresh} vendors={favorites} />
         )}
       </main>
     </div>
