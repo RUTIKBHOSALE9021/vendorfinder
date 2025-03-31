@@ -10,3 +10,7 @@ export interface VendorRequest {
     rating: number;
   }
   
+  export interface addVendorToFavoriteReq {
+      user_id: string,
+      vendor_id:string
+  }

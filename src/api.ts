@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
-import { VendorRequest } from "./types/apiReq";
+import { addVendorToFavoriteReq, VendorRequest } from "./types/apiReq";
 const apAuth = "/auth";
 const apVendor = "/vendors";
 
@@ -98,3 +98,26 @@ export const getVendorById = async (id:string)=>{
     throw "Something went wrong";
   }
 }
+
+export const addVendorToFavorite = async (req:addVendorToFavoriteReq)=>{
+  try {
+    const response = await api.post(`${apVendor}/addtofavorite`, req); 
+
+    return response.data;
+  } catch (error) {
+    console.error("Error adding vendor to favorites:", error);
+    
+    throw error.response?.data || { message: "Something went wrong" };
+  }
+};
+export const getFavoriteVendor = async (user_id:string)=>{
+  try {
+    const response = await api.get(`${apVendor}/getfavorite/${user_id}`); 
+    return response.data;
+  } catch (error) {
+    console.error("Error while getting favorites vendor", error);
+    
+    throw error.response?.data || { message: "Something went wrong" };
+  }
+};
+

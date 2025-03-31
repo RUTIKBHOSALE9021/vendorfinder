@@ -6,19 +6,39 @@ import { MapPin, Star, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { Button } from "@/components/ui/button";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { addVendorToFavorite } from "@/api";
 
 interface VendorCardProps {
   vendor: Vendor;
 }
 
 const VendorCard = ({ vendor }: VendorCardProps) => {
+  const user  = useSelector((state: RootState) => state.vendor.user);
   const { isFavorite, toggleFavorite } = useFavorites();
   const favorited = isFavorite(vendor.id);
+ 
+  const addToFavorite = async (user_id: string, vendor_id: string) => {
+    try {
+      await addVendorToFavorite({ user_id, vendor_id }); 
+      toggleFavorite(vendor);
+    } catch (error) {
+      console.error("Failed to add to favorites:", error);
+      alert(error.message || "Failed to add to favorites");
+    }
+  };
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleFavorite(vendor);
+
+    if (!user) {
+      alert("You must be logged in to add favorites!");
+      return;
+    }
+
+    addToFavorite(user.id, vendor.id); 
   };
 
   return (
