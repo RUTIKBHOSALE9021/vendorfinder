@@ -5,6 +5,7 @@ const {
   getFavoriteVendorsController,
   getVendorByIdController,
   addVendorToFavorite,
+  removeFromFavoriteVendor
 } = require("../controllers/vendorController");
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.get("/getall", getAllVendorsController);
 router.get("/getbyid/:id", getVendorByIdController);
 router.get("/getfavorite/:user_id", getFavoriteVendorsController);
 router.post("/addtofavorite", addVendorToFavorite);
+router.delete("/removefromfavorite",removeFromFavoriteVendor)
 
 module.exports = router;

@@ -3,7 +3,8 @@ const {
   getAllVendors,
   getVendorById,
   getFavoriteVendors,
-  addFavoriteVendor
+  addFavoriteVendor,
+  removeFromFavorite
 } = require("../models/vendorModel");
 
 const createVendorController = async (req, res) => {
@@ -106,6 +107,22 @@ const getFavoriteVendorsController = async (req, res) => {
   }
 };
 
+const removeFromFavoriteVendor = async (req, res) => {
+  const { user_id, vendor_id } = req.body;
+
+  try {
+    const result = await removeFromFavorite(user_id, vendor_id);
+    
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "No favorite vendor found for the given user" });
+    }
+    return res.status(200).json({ message: "Vendor removed from favorites successfully" });
+  } catch (error) {
+    console.error("Error removing favorite vendor:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 
 module.exports = {
@@ -114,5 +131,6 @@ module.exports = {
   getVendorByIdController,
   getFavoriteVendorsController,
   getFavoriteVendorsController,
-  addVendorToFavorite
+  addVendorToFavorite,
+  removeFromFavoriteVendor
 };

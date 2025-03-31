@@ -79,7 +79,7 @@ const getFavoriteVendors = async (user_id) => {
       SELECT v.* FROM vendors v
       INNER JOIN user_favorites uf ON v.id = uf.vendor_id
       WHERE uf.user_id = $1`;
-    
+
     const result = await pool.query(query, [user_id]);
 
     return result.rows;
@@ -89,10 +89,26 @@ const getFavoriteVendors = async (user_id) => {
   }
 };
 
+const removeFromFavorite = async (user_id, vendor_id) => {
+  const query = `
+    DELETE FROM user_favorites
+    WHERE user_id = $1 AND vendor_id = $2
+    RETURNING *;
+  `;
+
+  try {
+    const result = await pool.query(query, [user_id, vendor_id]);
+    return result;
+  } catch (error) {
+    console.error("Error while deleting favorite vendor:", error);
+    throw error;
+  }
+};
 module.exports = {
   createVendor,
   getAllVendors,
   getVendorById,
   getFavoriteVendors,
   addFavoriteVendor,
+  removeFromFavorite
 };
