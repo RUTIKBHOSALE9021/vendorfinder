@@ -3,6 +3,7 @@ const {
   getAllVendors,
   getVendorById,
   getFavoriteVendors,
+  addFavoriteVendor
 } = require("../models/vendorModel");
 
 const createVendorController = async (req, res) => {
@@ -67,14 +68,41 @@ const getVendorByIdController = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+ 
+const addVendorToFavorite = async (req, res) => {
+  const { user_id, vendor_id } = req.body;
+  
+  try {
+    const result = await addFavoriteVendor(user_id, vendor_id);
+
+    if (result.rowCount === 0) {
+      return res.status(409).json({ message: "Vendor already in favorites" });
+    }
+
+    return res.status(201).json({ 
+      message: "Vendor added to favorites", 
+      data: result.rows[0] 
+    });
+  } catch (error) {
+    console.error("Error adding vendor to favorites:", error);
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 const getFavoriteVendorsController = async (req, res) => {
+  const { user_id } = req.params;
+
   try {
-    const vendors = await getFavoriteVendors();
-    res.status(200).json({ vendors });
+    const vendors = await getFavoriteVendors(user_id);
+    
+    if (vendors.length === 0) {
+      return res.status(404).json({ message: "No favorite vendors found" });
+    }
+
+    return res.status(200).json({ vendors });
   } catch (error) {
     console.error("Error getting favorite vendors:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -86,4 +114,5 @@ module.exports = {
   getVendorByIdController,
   getFavoriteVendorsController,
   getFavoriteVendorsController,
+  addVendorToFavorite
 };
