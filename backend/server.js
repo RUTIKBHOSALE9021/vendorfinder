@@ -3,6 +3,7 @@ const cors = require("cors");
 const passport = require("passport");
 const authRoutes = require("./routes/authRoutes");
 const vendorRoutes = require("./routes/vendorRoutes");
+const mediumRoutes = require("./routes/portfolioRoute");
 require("dotenv").config();
 
 const app = express();
@@ -40,6 +41,7 @@ app.use(express.json());
 
 app.use("/auth", authRoutes);
 app.use("/vendors",vendorRoutes);
+app.use("/medium", mediumRoutes);
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
