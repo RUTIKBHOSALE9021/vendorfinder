@@ -20,6 +20,7 @@ const corsOptions = {
       'https://localhost:3000',
       'https://vendorfinder.onrender.com',
       'https://vendorgo.netlify.app',
+      'https://rutikbhosale.netlify.app'
       // Add any other origins you want to allow
     ];
 
