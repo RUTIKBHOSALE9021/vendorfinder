@@ -12,7 +12,7 @@ const router = express.Router();
 
 //vendor routes
 router.post("/create", createVendorController);
-router.get("/getall", getAllVendorsController);
+router.get("/getall/:user_id", getAllVendorsController);
 router.get("/getbyid/:id", getVendorByIdController);
 router.get("/getfavorite/:user_id", getFavoriteVendorsController);
 router.post("/addtofavorite", addVendorToFavorite);
