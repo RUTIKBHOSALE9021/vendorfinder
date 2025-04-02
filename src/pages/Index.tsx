@@ -6,26 +6,32 @@ import CategoryFilter from "@/components/CategoryFilter";
 import Header from "@/components/Header";
 import { getAllVendors } from "@/api";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const Index = () => {
+  const user = useSelector((state: RootState) => state.vendor.user);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [vendors, setVendors] = useState<Vendor[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchVendors = async () => {
-      try {
-        setLoading(true);
-        const response = await getAllVendors();
-        // Extract the vendors array from the response
-        setVendors(response.vendors || []);
-      } catch (error) {
-        console.error("Error fetching vendors:", error);
-        toast.error("Failed to fetch vendors");
-      } finally {
-        setLoading(false);
+      if( user && user.id){
+        try {
+          setLoading(true);
+          const response = await getAllVendors(user.id);
+          // Extract the vendors array from the response
+          setVendors(response.vendors || []);
+        } catch (error) {
+          console.error("Error fetching vendors:", error);
+          toast.error("Failed to fetch vendors");
+        } finally {
+          setLoading(false);
+        }
       }
+      return;
     };
 
     fetchVendors();

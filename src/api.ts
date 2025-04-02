@@ -74,9 +74,9 @@ export const createVendor = async (req:VendorRequest)=>{
     throw "Something went wrong";
   }
 }
-export const getAllVendors = async ()=>{
+export const getAllVendors = async (user_id:string)=>{
   try {
-    const response = await api.get(`${apVendor}/getall`);
+    const response = await api.get(`${apVendor}/getall/:${user_id}`);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
