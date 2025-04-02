@@ -36,9 +36,21 @@ const createVendor = async (
   }
 };
 
-const getAllVendors = async () => {
+const getAllVendors = async (user_id) => {
   try {
-    const result = await pool.query("SELECT * FROM vendors");
+    const query = `
+      SELECT 
+        v.*, 
+        CASE 
+            WHEN uf.user_id IS NOT NULL THEN TRUE 
+            ELSE FALSE 
+        END AS favorite
+      FROM vendors v
+      LEFT JOIN user_favorites uf 
+        ON v.id = uf.vendor_id AND uf.user_id = $1;
+    `;
+
+    const result = await pool.query(query, [user_id]);
     return result.rows;
   } catch (error) {
     console.error("Detailed error in getVendors:", error);
@@ -76,9 +88,13 @@ const addFavoriteVendor = async (user_id, vendor_id) => {
 const getFavoriteVendors = async (user_id) => {
   try {
     const query = `
-      SELECT v.* FROM vendors v
-      INNER JOIN user_favorites uf ON v.id = uf.vendor_id
-      WHERE uf.user_id = $1`;
+    SELECT 
+    v.*, 
+    TRUE AS favorite
+    FROM vendors v
+    INNER JOIN user_favorites uf 
+    ON v.id = uf.vendor_id 
+    WHERE uf.user_id = $1;`;
 
     const result = await pool.query(query, [user_id]);
 
@@ -110,5 +126,5 @@ module.exports = {
   getVendorById,
   getFavoriteVendors,
   addFavoriteVendor,
-  removeFromFavorite
+  removeFromFavorite,
 };

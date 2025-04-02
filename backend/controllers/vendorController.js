@@ -46,9 +46,10 @@ const createVendorController = async (req, res) => {
   }
 };
 
-const getAllVendorsController = async (_, res) => {
+const getAllVendorsController = async (req, res) => {
+  const { user_id } = req.body;
   try {
-    const vendors = await getAllVendors();
+    const vendors = await getAllVendors(user_id);
     res.status(200).json({ vendors });
   } catch (error) {
     console.error("Error getting vendors:", error);
