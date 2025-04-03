@@ -11,6 +11,7 @@ export interface Vendor {
   pricing: string;
   rating: number;
   isFavorite?: boolean;
+  favorite?: boolean;
 }
 
 export type VendorCategory = 

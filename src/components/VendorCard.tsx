@@ -3,11 +3,11 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useFavorites } from "@/contexts/FavoritesContext";
 import { Button } from "@/components/ui/button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { addVendorToFavorite, removeVendorToFavorite } from "@/api";
+import { getAllVendors } from "@/redux/indexSlice";
 
 interface VendorCardProps {
   vendor: Vendor;
@@ -15,13 +15,12 @@ interface VendorCardProps {
 
 const VendorCard = ({ vendor }: VendorCardProps) => {
   const user = useSelector((state: RootState) => state.vendor.user);
-  const { isFavorite, toggleFavorite } = useFavorites();
-  const favorited = isFavorite(vendor.id);
- 
+  const refresh = useSelector((state: RootState) => state.vendor.getallVendors);
+  const dispatch = useDispatch();
   const addToFavorite = async (user_id: string, vendor_id: string) => {
     try {
       await addVendorToFavorite({ user_id, vendor_id }); 
-      toggleFavorite(vendor);
+      dispatch(getAllVendors(!refresh));
     } catch (error) {
       console.error("Failed to add to favorites:", error);
       alert(error.message || "Failed to add to favorites");
@@ -31,6 +30,7 @@ const VendorCard = ({ vendor }: VendorCardProps) => {
   const removeFromFavorite = async (user_id: string, vendor_id: string) => {
     try {
       await removeVendorToFavorite({ user_id, vendor_id }); 
+      dispatch(getAllVendors(!refresh));
     } catch (error) {
       console.error("Failed to remove from favorites:", error);
       alert(error.message || "Failed to remove from favorites");
@@ -40,16 +40,16 @@ const VendorCard = ({ vendor }: VendorCardProps) => {
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
     if (!user) {
       alert("You must be logged in to add favorites!");
       return;
     }
-    if(favorited){
-      removeFromFavorite(user.id,vendor.id);
-      return;
+    if (vendor?.favorite) {
+      removeFromFavorite(user.id, vendor.id); 
+    } else {
+      addToFavorite(user.id,vendor.id); 
     }
-    addToFavorite(user.id,vendor.id); 
+    
   };
 
   return (
@@ -67,10 +67,10 @@ const VendorCard = ({ vendor }: VendorCardProps) => {
           <Button
             variant="ghost"
             size="icon"
-            className={`absolute top-3 right-3 bg-white/80 hover:bg-white ${favorited ? 'text-red-500' : 'text-gray-500'}`}
+            className={`absolute top-3 right-3 bg-white/80 hover:bg-white ${vendor?.favorite ? 'text-red-500' : 'text-gray-500'}`}
             onClick={handleFavoriteClick}
           >
-            <Heart className={`h-5 w-5 ${favorited ? 'fill-red-500' : ''}`} />
+            <Heart className={`h-5 w-5 ${vendor?.favorite ? 'fill-red-500' : ''}`} />
           </Button>
         </div>
         

@@ -1,5 +1,4 @@
 
-import { useFavorites } from "@/contexts/FavoritesContext";
 import VendorList from "@/components/VendorList";
 import Header from "@/components/Header";
 import { Heart } from "lucide-react";
@@ -10,26 +9,29 @@ import { getFavoriteVendor } from "@/api";
 
 const Favorites = () => {
   const [favorites,setFavorites] = useState([]);
-  const [refresh,setRefresh] = useState(false);
+  const refresh = useSelector((state: RootState) => state.vendor.getallVendors);
   const user  = useSelector((state: RootState) => state.vendor.user);
   const [loading, setLoading] = useState(true);
+  const fetchFavorites = async (showLoading = false) => {
+    if (!user?.id) return;
+    if (showLoading) setLoading(true);
+    try {
+      const response = await getFavoriteVendor(user.id);
+      setFavorites(response.vendors);
+    } catch (err) {
+      console.error("Error fetching favorite vendors:", err);
+    } finally {
+      if (showLoading) setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchFavorites = async () => {
-      if (!user?.id) return;
+    fetchFavorites(true);
+  }, [user?.id]);
 
-      try {
-        setLoading(true);
-        const response = await getFavoriteVendor(user.id);
-        setFavorites(response.vendors);
-      } catch (err) {
-        console.error("Error fetching favorite vendors:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchFavorites();
-  }, [user?.id, setFavorites,refresh]);
+  useEffect(() => {
+    fetchFavorites(false);
+  }, [refresh]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -53,7 +55,7 @@ const Favorites = () => {
             </p>
           </div>
         ) : (
-          <VendorList setRefresh = {setRefresh} vendors={favorites} />
+          <VendorList  vendors={favorites} />
         )}
       </main>
     </div>

@@ -10,11 +10,13 @@ interface User {
 interface UserState {
   token: string | null;
   user: User | null;
+  getallVendors: boolean;
 }
 
 const initialState: UserState = {
   token: localStorage.getItem("token"),
   user: null,
+  getallVendors: false,
 };
 
 export const adminSlice = createSlice({
@@ -29,8 +31,11 @@ export const adminSlice = createSlice({
       state.token = null;
       state.user = null;
     },
+    getAllVendors: (state,action) => {
+      state.getallVendors = action.payload;
+    },
   },
 });
 
-export const { initUser, logout } = adminSlice.actions;
+export const { initUser, logout,getAllVendors } = adminSlice.actions;
 export default adminSlice.reducer;

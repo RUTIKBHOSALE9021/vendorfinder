@@ -11,34 +11,40 @@ import { RootState } from "@/redux/store";
 
 const Index = () => {
   const user = useSelector((state: RootState) => state.vendor.user);
+  const refresh = useSelector((state: RootState) => state.vendor.getallVendors);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchVendors = async () => {
-      if( user && user.id){
-        try {
-          setLoading(true);
-          const response = await getAllVendors(user.id);
-          // Extract the vendors array from the response
-          setVendors(response.vendors || []);
-        } catch (error) {
-          console.error("Error fetching vendors:", error);
-          toast.error("Failed to fetch vendors");
-        } finally {
-          setLoading(false);
-        }
-      }
-      return;
-    };
+  const fetchVendors = async (showLoading = false) => {
+    if (!user || !user.id) return;
+    
+    if (showLoading) setLoading(true);
+    
+    try {
+      const response = await getAllVendors(user.id);
+      setVendors(response.vendors || []);
+    } catch (error) {
+      console.error("Error fetching vendors:", error);
+      toast.error("Failed to fetch vendors");
+    } finally {
+      if (showLoading) setLoading(false);
+    }
+  };
 
-    fetchVendors();
-  }, []);
+  useEffect(() => {
+    fetchVendors(true);
+  }, [user?.id]);
+
+
+  useEffect(() => {
+      fetchVendors(false);
+  }, [refresh]);
 
   const filteredVendors = vendors.filter((vendor) => {
-    const matchesSearch = vendor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const matchesSearch = 
+      vendor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       vendor.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       vendor.location.toLowerCase().includes(searchQuery.toLowerCase());
     
