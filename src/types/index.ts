@@ -33,3 +33,13 @@ export interface Message {
   timestamp: Date;
   isRead: boolean;
 }
+
+export interface Conversation {
+  id: string;
+  vendorId: string;
+  vendorName: string;
+  lastMessage: string;
+  timestamp: Date;
+  unread: boolean;
+  messages?: Message[];
+}
