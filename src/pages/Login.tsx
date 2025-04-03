@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,8 @@ import { User } from "@/redux/type";
 const Login = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.vendor.user);
-  const [user, setUser] = useState<User | null>(userData);
+  // Fix: Use proper typing for useState with User type
+  const [user, setUser] = useState<User | null>(userData || null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -34,7 +36,10 @@ const Login = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      setUser(userData);
+      // Fix: Handle userData properly when setting user state
+      if (userData) {
+        setUser(userData);
+      }
       navigate("/");
     }
   }, [userData, navigate]);
