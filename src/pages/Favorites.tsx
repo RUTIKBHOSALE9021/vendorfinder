@@ -1,4 +1,3 @@
-
 import VendorList from "@/components/VendorList";
 import Header from "@/components/Header";
 import { Heart } from "lucide-react";
@@ -8,9 +7,9 @@ import { useEffect, useState } from "react";
 import { getFavoriteVendor } from "@/api";
 
 const Favorites = () => {
-  const [favorites,setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const refresh = useSelector((state: RootState) => state.vendor.getallVendors);
-  const user  = useSelector((state: RootState) => state.vendor.user);
+  const user = useSelector((state: RootState) => state.vendor.user);
   const [loading, setLoading] = useState(true);
   const fetchFavorites = async (showLoading = false) => {
     if (!user?.id) return;
@@ -19,6 +18,7 @@ const Favorites = () => {
       const response = await getFavoriteVendor(user.id);
       setFavorites(response.vendors);
     } catch (err) {
+      setFavorites([]);
       console.error("Error fetching favorite vendors:", err);
     } finally {
       if (showLoading) setLoading(false);
@@ -27,7 +27,6 @@ const Favorites = () => {
   useEffect(() => {
     fetchFavorites(true);
   }, [user?.id]);
-
 
   useEffect(() => {
     fetchFavorites(false);
@@ -43,8 +42,13 @@ const Favorites = () => {
         </div>
 
         {loading ? (
-          <p className="text-center text-gray-600">Loading...</p>
-        ): favorites.length === 0 ? (
+          <div
+            className="flex justify-center items-center"
+            style={{ height: "60vh" }}
+          >
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        ) : favorites.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg shadow-sm">
             <Heart className="h-12 w-12 text-gray-300 mx-auto mb-4" />
             <h2 className="text-xl font-medium text-gray-800 mb-2">
@@ -55,7 +59,7 @@ const Favorites = () => {
             </p>
           </div>
         ) : (
-          <VendorList  vendors={favorites} />
+          <VendorList vendors={favorites} />
         )}
       </main>
     </div>
