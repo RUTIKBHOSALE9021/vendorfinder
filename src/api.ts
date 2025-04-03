@@ -76,7 +76,7 @@ export const createVendor = async (req:VendorRequest)=>{
 }
 export const getAllVendors = async (user_id:string)=>{
   try {
-    const response = await api.get(`${apVendor}/getall/:${user_id}`);
+    const response = await api.get(`${apVendor}/getall/${user_id}`);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -88,7 +88,7 @@ export const getAllVendors = async (user_id:string)=>{
 }
 export const getVendorById = async (id:string)=>{
   try {
-    const response = await api.get(`${apVendor}/getbyid/:${id}`);
+    const response = await api.get(`${apVendor}/getbyid/${id}`);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
