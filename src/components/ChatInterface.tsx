@@ -1,6 +1,11 @@
-
 import React, { useState } from "react";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -20,48 +25,48 @@ const ChatInterface = ({ vendorId, vendorName }: ChatInterfaceProps) => {
       receiverId: "user",
       content: `Hi there! Thanks for your interest in our services. How can I help you?`,
       timestamp: new Date(),
-      isRead: true
-    }
+      isRead: true,
+    },
   ]);
   const [newMessage, setNewMessage] = useState("");
 
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
-    
+
     const message: Message = {
       id: Date.now().toString(),
       senderId: "user",
       receiverId: vendorId,
       content: newMessage,
       timestamp: new Date(),
-      isRead: true
+      isRead: true,
     };
-    
+
     setMessages([...messages, message]);
     setNewMessage("");
-    
-    // Simulate vendor response after a delay
+
     setTimeout(() => {
       const vendorResponse: Message = {
         id: (Date.now() + 1).toString(),
         senderId: vendorId,
         receiverId: "user",
-        content: "Thanks for your message! I'll get back to you as soon as possible.",
+        content:
+          "Thanks for your message! I'll get back to you as soon as possible.",
         timestamp: new Date(),
-        isRead: true
+        isRead: true,
       };
-      
-      setMessages(prev => [...prev, vendorResponse]);
+
+      setMessages((prev) => [...prev, vendorResponse]);
     }, 1000);
   };
 
   return (
-    <Card className="h-[500px] flex flex-col">
+    <Card className="h-screen p-2 flex flex-col">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg">Chat with {vendorName}</CardTitle>
       </CardHeader>
-      <CardContent className="flex-grow overflow-hidden p-4">
-        <ScrollArea className="h-[370px] pr-4">
+      <CardContent className="flex-grow overflow-hidden p-4 flex flex-col">
+        <ScrollArea className="flex-grow overflow-y-auto pr-4">
           <div className="space-y-4">
             {messages.map((message) => (
               <div
@@ -79,7 +84,10 @@ const ChatInterface = ({ vendorId, vendorName }: ChatInterfaceProps) => {
                 >
                   <p>{message.content}</p>
                   <span className="text-xs opacity-70 block text-right mt-1">
-                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {message.timestamp.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </span>
                 </div>
               </div>
