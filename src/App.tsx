@@ -11,6 +11,7 @@ import Favorites from "./pages/Favorites";
 import Messages from "./pages/Messages";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import AddService from "./pages/AddService";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
 import AuthCallback from "./pages/AuthCallback";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -57,6 +58,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Messages />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/add-service"
+              element={
+                <ProtectedRoute>
+                  <AddService />
                 </ProtectedRoute>
               }
             />

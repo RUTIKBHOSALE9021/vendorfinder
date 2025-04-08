@@ -1,104 +1,122 @@
-
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageCircle, Home, LogIn, UserPlus, LogOut } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/redux/store";
-import { logout } from "@/redux/indexSlice";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { User } from "@/types";
+import { setUser, clearUser } from "@/redux/vendorSlice";
+import { useQuery } from "@tanstack/react-query";
 
 const Header = () => {
-  const dispatch = useDispatch();
+  const { logout } = useAuth();
   const navigate = useNavigate();
-  const user  = useSelector((state: RootState) => state.vendor.user);
-  const token = localStorage.getItem("token");
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    dispatch(logout());
-    toast.success("Logged out successfully");
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.vendor.user);
+  const userData = localStorage.getItem("user");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      dispatch(setUser(parsedUser));
+    }
+  }, [dispatch, userData]);
+
+  const handleLogout = async () => {
+    await logout();
+    dispatch(clearUser());
     navigate("/login");
+    setIsMenuOpen(false);
   };
 
-  return (
-    <header className="bg-white border-b sticky top-0 z-10">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold text-primary">
-            EventVendors
-          </Link>
+  const menuItems = [
+    {
+      name: "Home",
+      href: "/",
+    },
+    {
+      name: "Favorites",
+      href: "/favorites",
+    },
+    {
+      name: "Messages",
+      href: "/messages",
+    },
+    {
+      name: "Add Service",
+      href: "/add-service",
+    },
+  ];
 
-          <nav className="flex items-center space-x-1 md:space-x-2">
-            <Button variant="ghost" asChild size="sm">
-              <Link to="/" className="flex items-center">
-                <Home className="h-4 w-4 mr-1 md:mr-2" />
-                <span className="hidden md:inline">Home</span>
-              </Link>
-            </Button>
-            {token ? (
-              <>
-                <Button variant="ghost" asChild size="sm">
-                  <Link to="/favorites" className="flex items-center">
-                    <Heart className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden md:inline">Favorites</span>
-                  </Link>
-                </Button>
-                <Button variant="ghost" asChild size="sm">
-                  <Link to="/messages" className="flex items-center">
-                    <MessageCircle className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden md:inline">Messages</span>
-                  </Link>
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback className="bg-primary text-primary-foreground">
-                          {user?.full_name?.charAt(0)?.toUpperCase() || ""}
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <div className="flex items-center justify-start gap-2 p-2">
-                      <div className="flex flex-col space-y-1 leading-none">
-                        <p className="font-medium">{user.full_name}</p>
-                        <p className="text-sm text-muted-foreground">{user.email}</p>
-                      </div>
-                    </div>
-                    <DropdownMenuItem onClick={handleLogout}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Log out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
-            ) : (
-              <>
-                <Button variant="ghost" asChild size="sm">
-                  <Link to="/login" className="flex items-center">
-                    <LogIn className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden md:inline">Login</span>
-                  </Link>
-                </Button>
-                <Button variant="ghost" asChild size="sm">
-                  <Link to="/signup" className="flex items-center">
-                    <UserPlus className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden md:inline">Sign up</span>
-                  </Link>
-                </Button>
-              </>
-            )}
-          </nav>
-        </div>
+  return (
+    <header className="bg-white shadow-md">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <Link to="/" className="text-2xl font-bold text-gray-800">
+          Vendor Finder
+        </Link>
+
+        <nav className="hidden md:flex items-center space-x-6">
+          {menuItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.href}
+              className="text-gray-600 hover:text-gray-800 transition-colors duration-200"
+            >
+              {item.name}
+            </Link>
+          ))}
+        </nav>
+
+        {user ? (
+          <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="https://github.com/shadcn.png" alt="Shadcn" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{user.full_name}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user.email}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => navigate("/profile")}>
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => navigate("/settings")}>
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={handleLogout}>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="hidden md:flex items-center space-x-4">
+            <Link to="/login">
+              <Button variant="outline">Log In</Button>
+            </Link>
+            <Link to="/signup">
+              <Button>Sign Up</Button>
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );
