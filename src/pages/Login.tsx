@@ -1,119 +1,119 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { login as loginAction } from "@/redux/vendorSlice";
-import { setUser } from "@/redux/vendorSlice";
-import { RootState } from "@/redux/store";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "@/redux/vendorSlice";
 import { useToast } from "@/components/ui/use-toast";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useMutation } from "@tanstack/react-query";
-import { login, googleAuth } from "@/api";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { User } from "@/types";
 
+// Any required imports and components would be here
+
+const formSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { toast } = useToast();
-  const userData = useSelector((state: RootState) => state.vendor.user);
-  const [user, setLocalUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (userData) {
-      dispatch(setUser(userData));
-      setLocalUser(userData);
-    }
-  }, [userData, dispatch]);
-
-  const loginMutation = useMutation({
-    mutationFn: (credentials: { email: string; password: string }) => login(credentials),
-    onSuccess: (data) => {
-      dispatch(loginAction(data));
-      localStorage.setItem("token", data.token);
-      toast({
-        title: "Login successful!",
-        description: "You have successfully logged in.",
-      });
-      navigate("/");
-    },
-    onError: (error: any) => {
-      toast({
-        variant: "destructive",
-        title: "Login failed.",
-        description: error.message || "Invalid credentials.",
-      });
-    },
-    onSettled: () => {
-      setIsLoading(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
     },
   });
-
-  const handleLogin = async () => {
+  
+  const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
-    loginMutation.mutate({ email, password });
-  };
-
-  const handleGoogleAuth = async () => {
+    
     try {
-      await googleAuth();
-    } catch (error: any) {
+      // Mock login - replace with actual API call
+      const mockUser: User = {
+        id: "1",
+        full_name: "Test User",
+        email: data.email,
+        token: "mock-token-12345"
+      };
+      
+      // Dispatching login action with user data
+      dispatch(login(mockUser));
+      
+      toast({
+        title: "Login successful",
+        description: "Welcome back to Vendor Finder!",
+      });
+      
+      navigate("/");
+    } catch (error) {
       toast({
         variant: "destructive",
-        title: "Google authentication failed.",
-        description: error.message || "Could not authenticate with Google.",
+        title: "Login failed",
+        description: "Please check your credentials and try again.",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  if (user) {
-    navigate("/");
-    return null;
-  }
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <Card className="w-full max-w-md p-4">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Login</CardTitle>
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardDescription>Enter your email and password to login</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              placeholder="Enter your email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              placeholder="Enter your password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <Button onClick={handleLogin} disabled={isLoading}>
-            {isLoading ? "Logging in..." : "Login"}
-          </Button>
-          <div className="text-center">
-            <Button variant="outline" onClick={handleGoogleAuth}>
-              Login with Google
-            </Button>
-          </div>
-          <div className="text-sm text-gray-500 text-center">
-            Don't have an account? <Link to="/signup">Sign up</Link>
-          </div>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="Email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button disabled={isLoading} type="submit" className="w-full">
+                {isLoading ? "Logging in..." : "Login"}
+              </Button>
+            </form>
+          </Form>
         </CardContent>
+        <CardFooter className="text-center">
+          <p className="text-sm text-gray-500">
+            Don't have an account? <a href="/signup" className="text-primary">Sign up</a>
+          </p>
+        </CardFooter>
       </Card>
     </div>
   );

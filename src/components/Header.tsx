@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -62,7 +63,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-white shadow">
+    <header className="bg-white shadow sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="text-2xl font-bold text-gray-800">
           Vendor Finder
