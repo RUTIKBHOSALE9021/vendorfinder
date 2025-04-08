@@ -10,8 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMutation } from "@tanstack/react-query";
-import { login } from "@/api";
-import { googleAuth } from "@/api";
+import { login, googleAuth } from "@/api";
 import { User } from "@/types";
 
 const Login = () => {
@@ -21,19 +20,18 @@ const Login = () => {
   const dispatch = useDispatch();
   const { toast } = useToast();
   const userData = useSelector((state: RootState) => state.vendor.user);
-  // Fix the error by correctly typing useState with User | null
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setLocalUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Fix: Check if userData exists and then correctly set the user state
     if (userData) {
       dispatch(setUser(userData));
-      setUser(userData);
+      setLocalUser(userData);
     }
   }, [userData, dispatch]);
 
-  const loginMutation = useMutation(login, {
+  const loginMutation = useMutation({
+    mutationFn: (credentials: { email: string; password: string }) => login(credentials),
     onSuccess: (data) => {
       dispatch(loginAction(data));
       localStorage.setItem("token", data.token);

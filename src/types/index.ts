@@ -1,4 +1,3 @@
-
 export interface Vendor {
   id: string;
   name: string;
@@ -42,4 +41,11 @@ export interface Conversation {
   timestamp: Date;
   unread: boolean;
   messages?: Message[];
+}
+
+export interface User {
+  id: string;
+  full_name: string;
+  email: string;
+  token?: string;
 }

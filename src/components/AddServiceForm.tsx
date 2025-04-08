@@ -19,6 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { VendorRequest } from "@/types/apiReq";
 
 // Define the validation schema
 const formSchema = z.object({
@@ -78,10 +79,16 @@ const AddServiceForm = ({ isSubmitting, setIsSubmitting }: AddServiceFormProps) 
 
     setIsSubmitting(true);
     try {
-      // Convert the pricing to a number
-      const vendorRequest = {
-        ...data,
+      // Convert the form data to the correct VendorRequest type
+      const vendorRequest: VendorRequest = {
+        name: data.name,
+        description: data.description,
+        category: data.category,
+        location: data.location,
+        contactEmail: data.contactEmail,
+        contactPhone: data.contactPhone,
         pricing: Number(data.pricing),
+        image: data.image,
         rating: 0 // Default rating for new services
       };
 
